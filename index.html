@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laura's Bakery</title>
+<style>
+:root{--brown:#80523b;--dark:#75462f;--cream:#fff9f1;--pink:#f6e6d5;--muted:#88776b}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#fffdf9;color:#40352e}
+header{background:var(--cream);padding:16px 5%;position:sticky;top:0;z-index:10;box-shadow:0 2px 12px #0000000b}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:48px;height:48px;border-radius:50%;background:var(--brown);color:#fff4e8;display:grid;place-items:center;font:28px Georgia}.brand h1{font: bold 23px Georgia;color:var(--dark);margin:0}.brand small{color:#94725e}
+nav{display:flex;gap:8px;overflow-x:auto;padding-top:14px}nav button,.filter button{white-space:nowrap;border:1px solid #e8d8c8;border-radius:22px;background:white;padding:9px 13px;cursor:pointer;color:var(--dark)}nav button.active,.filter button.active{background:var(--brown);color:white}
+main{max-width:1100px;margin:auto;padding:24px 5%}.page{display:none}.page.active{display:block}
+.hero{background:linear-gradient(120deg,#f6e6d5,#fff5e9);padding:28px;border-radius:20px}.hero h2{font: bold 38px Georgia;color:var(--dark);max-width:500px;margin:14px 0}.hero p{line-height:1.7;max-width:540px}.hero img{width:100%;max-height:280px;object-fit:cover;border-radius:15px;margin-top:15px}
+.btn{border:0;background:var(--brown);color:white;padding:11px 17px;border-radius:10px;font-weight:bold;cursor:pointer}.btn:hover{background:#613b2c}
+h2.section-title{color:var(--dark);margin-bottom:5px}.muted{color:var(--muted);font-size:14px}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin-top:18px}
+.product{border:1px solid #eee3d8;border-radius:15px;overflow:hidden;background:white}.product img{width:100%;height:155px;object-fit:cover}.info{padding:12px}.info h3{font-size:16px;margin:9px 0 5px}.info p{font-size:13px;color:var(--muted);min-height:32px}.price{color:var(--dark);font-weight:bold}.tag{font-size:11px;background:#f8e8da;color:#87563c;padding:5px 9px;border-radius:20px}
+.filter{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}.tile{background:#fff8f0;border:1px solid #eee1d4;border-radius:14px;padding:16px}.category-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.category{cursor:pointer;text-align:left}.category strong{display:block;color:var(--dark);margin:8px 0}
+input,textarea,select{width:100%;padding:12px;border:1px solid #e5d8cd;border-radius:10px;background:white;font:inherit}label{display:block;font-size:14px;font-weight:bold;margin:13px 0 6px}
+.cartline{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid #eee3d8;padding:13px 0}.qty button{background:white;border:1px solid #ddd;border-radius:6px;padding:4px 10px;cursor:pointer}
+.total{display:flex;justify-content:space-between;font-size:19px;font-weight:bold;color:var(--dark);margin:18px 0}
+.promo{border-radius:17px;padding:23px;margin:14px 0;background:#f7e4d6}.promo:nth-child(3){background:#f9eddf}.promo:nth-child(4){background:#f2e8df}
+footer{background:var(--dark);color:#fff5e9;text-align:center;padding:24px;margin-top:30px}
+@media(max-width:700px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.product img{height:125px}.hero h2{font-size:30px}.hero{padding:20px}.cartline{flex-wrap:wrap}.brand h1{font-size:20px}}
+@media(min-width:900px){header{padding-left:max(5%,calc((100% - 1100px)/2));padding-right:max(5%,calc((100% - 1100px)/2))}}
+</style>
+</head>
+<body>
+<header>
+ <div class="brand"><div class="logo">L</div><div><h1>Laura's Bakery</h1><small>Freshly Baked, Made with Love ♡</small></div></div>
+ <nav>
+  <button class="active" data-page="home">Beranda</button><button data-page="products">Produk</button><button data-page="categories">Kategori</button><button data-page="cart">🛒 Keranjang (<span id="cart-count">0</span>)</button><button data-page="order">Pesanan</button><button data-page="promos">Promo</button><button data-page="about">Tentang Kami</button><button data-page="contact">Kontak</button>
+ </nav>
+</header>
+<main>
+<section class="page active" id="home">
+ <div class="hero"><span class="tag">WELCOME TO LAURA'S BAKERY</span><h2>Manisnya Hari, Dimulai dari Roti ♡</h2><p>Nikmati berbagai pilihan roti dan kue lezat yang dibuat dengan bahan berkualitas dan penuh cinta.</p><button class="btn" data-go="products">Lihat Produk →</button><img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1000" alt="Aneka roti segar"></div>
+ <h2 class="section-title" style="margin-top:28px">Favorit Pelanggan</h2><p class="muted">Pilihan lezat untuk menemani harimu.</p><div class="grid" id="featured"></div>
+ <div class="tile" style="margin-top:22px;text-align:center"><h2 class="section-title">Sweet Moments Begin Here!</h2><p>Terima kasih sudah memilih Laura's Bakery. Setiap gigitan punya cerita manis.</p></div>
+</section>
+<section class="page" id="products">
+ <h2 class="section-title">Produk Kami 🥐</h2><p class="muted">Temukan roti dan kue favoritmu.</p><input id="search" placeholder="Cari roti atau kue..."><div class="filter" id="filters"></div><div class="grid" id="product-list"></div>
+</section>
+<section class="page" id="categories">
+ <h2 class="section-title">Kategori Produk</h2><p class="muted">Pilih kategori sesuai seleramu.</p>
+ <div class="category-grid" style="margin-top:18px">
+  <button class="tile category" data-cat="Roti"><span style="font-size:30px">🥐</span><strong>Aneka Roti</strong><span class="muted">Roti manis dan gurih</span></button>
+  <button class="tile category" data-cat="Kue"><span style="font-size:30px">🎂</span><strong>Aneka Kue</strong><span class="muted">Kue lezat berbagai rasa</span></button>
+  <button class="tile category" data-cat="Pastry"><span style="font-size:30px">🥮</span><strong>Pastry</strong><span class="muted">Pastry renyah dan lembut</span></button>
+  <button class="tile category" data-cat="Cookies"><span style="font-size:30px">🍪</span><strong>Cookies</strong><span class="muted">Camilan manis dan renyah</span></button>
+ </div>
+</section>
+<section class="page" id="cart">
+ <h2 class="section-title">Keranjang Belanja 🛒</h2><p class="muted">Daftar produk yang ingin kamu beli.</p><div class="tile" id="cart-list"></div><div class="total"><span>Total Belanja</span><span id="cart-total">Rp0</span></div><button class="btn" style="width:100%" id="checkout">Lanjut ke Pemesanan →</button>
+</section>
+<section class="page" id="order">
+ <h2 class="section-title">Form Pemesanan 📝</h2><p class="muted">Isi data berikut untuk melakukan pemesanan.</p>
+ <form class="tile" id="order-form">
+  <label>Nama Lengkap</label><input name="name" required placeholder="Masukkan nama kamu">
+  <label>Nomor WhatsApp</label><input name="phone" type="tel" required placeholder="08xxxxxxxxxx">
+  <label>Alamat Pengiriman</label><textarea name="address" rows="3" required placeholder="Masukkan alamat lengkap"></textarea>
+  <label>Daftar Produk</label><div id="order-summary" class="muted">Belum ada produk di keranjang.</div>
+  <label>Tanggal Pengambilan / Pengiriman</label><input name="date" type="date" required>
+  <label>Metode Pengambilan</label><select name="delivery"><option>Ambil di toko</option><option>Pengiriman / Delivery</option></select>
+  <label>Catatan Tambahan</label><textarea name="notes" rows="2" placeholder="Contoh: tulisan pada kue atau rasa pilihan"></textarea>
+  <div class="total"><span>Total</span><span id="order-total">Rp0</span></div><button class="btn" style="width:100%" type="submit">Kirim Pesanan</button>
+ </form><div id="order-result"></div><p class="muted">*Ini adalah simulasi pemesanan. Hubungkan ke WhatsApp atau backend agar pesanan diterima toko secara nyata.</p>
+</section>
+<section class="page" id="promos">
+ <h2 class="section-title">Promo & Penawaran 🎁</h2><p class="muted">Nikmati penawaran spesial dari Laura's Bakery.</p>
+ <div class="promo"><span class="tag">PROMO SPESIAL</span><h2 style="color:var(--dark);font-size:32px">DISKON 10%</h2><p>Untuk pembelian minimal Rp100.000.</p><b>Kode promo: LAURA10</b></div>
+ <div class="promo"><h2>🎂 Special Birthday Cake</h2><p>Pesan kue ulang tahun dengan desain sesuai keinginanmu.</p></div>
+ <div class="promo"><h2>🥐 Paket Hemat Bakery</h2><p>Nikmati pilihan roti dan pastry dalam satu paket spesial.</p></div>
+</section>
+<section class="page" id="about">
+ <h2 class="section-title">Tentang Laura's Bakery ♡</h2><img style="width:100%;height:230px;object-fit:cover;border-radius:16px;margin:15px 0" src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=1000" alt="Tampilan bakery">
+ <h2 style="font-family:Georgia;color:var(--dark)">Sweetness in Every Bite</h2><p style="line-height:1.8">Laura's Bakery merupakan toko roti dan kue yang menyediakan berbagai pilihan produk bakery dengan cita rasa lezat, tampilan menarik, dan kualitas terbaik. Kami hadir untuk memberikan pengalaman menikmati roti dan kue yang menyenangkan untuk setiap pelanggan.</p>
+ <div class="category-grid"><div class="tile"><h3>♡ Visi</h3><p class="muted">Menjadi toko bakery pilihan pelanggan dengan produk berkualitas.</p></div><div class="tile"><h3>✧ Misi</h3><p class="muted">Menyajikan produk lezat, pelayanan ramah, dan harga terjangkau.</p></div></div>
+</section>
+<section class="page" id="contact">
+ <h2 class="section-title">Hubungi Kami ☎</h2><p class="muted">Kami siap membantu kebutuhan bakery-mu.</p>
+ <div class="tile" style="margin-top:18px;line-height:2.2"><p>📍 <b>Alamat Toko</b><br><span class="muted">Isi alamat toko Laura's Bakery di sini.</span></p><p>📱 <b>WhatsApp</b><br><span class="muted">Isi nomor WhatsApp toko di sini.</span></p><p>📷 <b>Instagram</b><br><span class="muted">@laurasbakery</span></p><p>🕒 <b>Jam Operasional</b><br><span class="muted">Senin–Sabtu, 08.00–20.00 WIB</span></p></div>
+ <div class="tile" style="margin-top:15px"><b>Ada pertanyaan atau pesanan khusus?</b><p class="muted">Hubungi toko untuk informasi produk dan pemesanan.</p><button class="btn" data-go="order">Buat Pesanan</button></div>
+</section>
+</main>
+<footer>© 2026 Laura's Bakery · Freshly Baked with Love ♡</footer>
+<script>
+const products=[
+{name:'Croissant',cat:'Pastry',price:15000,desc:'Pastry renyah dan buttery',img:'photo-1555507036-ab1f4038808a'},
+{name:'Roti Cokelat',cat:'Roti',price:12000,desc:'Roti lembut isi cokelat',img:'photo-1608198093002-ad4e005484df'},
+{name:'Donat',cat:'Roti',price:8000,desc:'Donat manis dengan topping',img:'photo-1551024506-0bccd828d307'},
+{name:'Birthday Cake',cat:'Kue',price:120000,desc:'Kue ulang tahun spesial',img:'photo-1578985545062-69928b1d9587'},
+{name:'Cheesecake',cat:'Kue',price:35000,desc:'Lembut dan creamy',img:'photo-1533134242443-d4fd215305ad'},
+{name:'Cookies',cat:'Cookies',price:25000,desc:'Cookies renyah dan nikmat',img:'photo-1499636136210-6f4ee915583e'},
+{name:'Brownies',cat:'Kue',price:40000,desc:'Brownies cokelat lembut',img:'photo-1606313564200-e75d5e30476c'},
+{name:'Garlic Bread',cat:'Roti',price:18000,desc:'Roti gurih aroma bawang',img:'photo-1619531040576-f9416740661e'}
+];
+let cart={},category='Semua';
+const money=n=>'Rp'+n.toLocaleString('id-ID');
+const image=p=>`https://images.unsplash.com/${p.img}?auto=format&fit=crop&w=600&q=80`;
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));if(id==='cart')renderCart();if(id==='order')renderOrder();window.scrollTo({top:0,behavior:'smooth'})}
+document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.go)));
+function addToCart(name){cart[name]=(cart[name]||0)+1;renderCount()}
+function renderCount(){document.getElementById('cart-count').textContent=Object.values(cart).reduce((a,b)=>a+b,0)}
+function card(p){return `<article class="product"><img src="${image(p)}" alt="${p.name}" loading="lazy"><div class="info"><span class="tag">${p.cat}</span><h3>${p.name}</h3><p>${p.desc}</p><div style="display:flex;justify-content:space-between;align-items:center;gap:5px"><span class="price">${money(p.price)}</span><button class="btn" style="padding:8px 10px" onclick="addToCart('${p.name}')">+ Tambah</button></div></div></article>`}
+function renderProducts(){const q=document.getElementById('search').value.toLowerCase();const list=products.filter(p=>(category==='Semua'||p.cat===category)&&p.name.toLowerCase().includes(q));document.getElementById('product-list').innerHTML=list.map(card).join('')||'<p>Produk tidak ditemukan.</p>'}
+function setupFilters(){const cats=['Semua','Roti','Kue','Pastry','Cookies'];document.getElementById('filters').innerHTML=cats.map(c=>`<button class="${c===category?'active':''}" data-filter="${c}">${c}</button>`).join('');document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{category=b.dataset.filter;setupFilters();renderProducts()})}
+function total(){return products.reduce((s,p)=>s+p.price*(cart[p.name]||0),0)}
+function renderCart(){const items=products.filter(p=>cart[p.name]);document.getElementById('cart-list').innerHTML=items.length?items.map(p=>`<div class="cartline"><div><b>${p.name}</b><div class="muted">${money(p.price)} / item</div></div><div class="qty"><button onclick="changeQty('${p.name}',-1)">−</button> ${cart[p.name]} <button onclick="changeQty('${p.name}',1)">+</button></div><b>${money(p.price*cart[p.name])}</b></div>`).join(''):'<p style="text-align:center;padding:25px">🛒<br><b>Keranjang masih kosong</b><br><span class="muted">Yuk, pilih roti dan kue favoritmu!</span></p>';document.getElementById('cart-total').textContent=money(total())}
+function changeQty(name,n){cart[name]=(cart[name]||0)+n;if(cart[name]<=0)delete cart[name];renderCount();renderCart()}
+function renderOrder(){const items=products.filter(p=>cart[p.name]);document.getElementById('order-summary').innerHTML=items.length?items.map(p=>`${p.name} × ${cart[p.name]} — ${money(p.price*cart[p.name])}`).join('<br>'):'Belum ada produk di keranjang.';document.getElementById('order-total').textContent=money(total())}
+document.getElementById('search').addEventListener('input',renderProducts);
+document.querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',()=>{category=b.dataset.cat;setupFilters();renderProducts();showPage('products')}));
+document.getElementById('checkout').addEventListener('click',()=>{if(!total()){showPage('products');return}showPage('order')});
+document.getElementById('order-form').addEventListener('submit',e=>{e.preventDefault();if(!total()){alert('Tambahkan produk ke keranjang terlebih dahulu.');return}const data=new FormData(e.target);document.getElementById('order-result').innerHTML=`<div class="tile" style="margin-top:15px"><b style="color:var(--dark)">Pesanan berhasil dicatat! ♡</b><p>Terima kasih, ${data.get('name')}. Ini simulasi pemesanan Laura's Bakery.</p><p>Total pembayaran: <b>${money(total())}</b></p><p class="muted">Pesanan belum dikirim ke toko. Hubungkan WhatsApp atau backend untuk menerima pesanan secara nyata.</p></div>`;});
+document.getElementById('featured').innerHTML=products.slice(0,4).map(card).join('');
+setupFilters();renderProducts();renderCart();renderCount();
+</script>
+</body>
+</html>
